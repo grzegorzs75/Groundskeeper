@@ -1,0 +1,121 @@
+@page "/sites/edit"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Site</h2>
+<hr />
+@if (Site is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Site" OnValidSubmit="UpdateSite" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Site.Id" value="@Site.Id" />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="Site.Name" class="form-control" />
+                    <ValidationMessage For="() => Site.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <InputText id="address" @bind-Value="Site.Address" class="form-control" />
+                    <ValidationMessage For="() => Site.Address" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="customerid" class="form-label">CustomerId:</label>
+                    <InputNumber id="customerid" @bind-Value="Site.CustomerId" class="form-control" />
+                    <ValidationMessage For="() => Site.CustomerId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="customer" class="form-label">Customer:</label>
+                   
+                    <InputSelect id="customer"
+                                 @bind-Value="Site.CustomerId"
+                                 class="form-control">
+                        <option value="">-- Select customer --</option>
+
+                        @foreach (var customer in Customers)
+                        {
+                            <option value="@customer.Id">@customer.Name</option>
+                        }
+                    </InputSelect>
+
+                    <ValidationMessage For="() => Site.Customer" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/sites">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Site? Site { get; set; }
+
+    private List<Customer> Customers = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Site ??= await context.Sites.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Site is null)
+        {
+            NavigationManager.NotFound();
+        }
+
+        Customers = await context.Customers
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateSite()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Site!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!SiteExists(Site!.Id))
+            {
+                NavigationManager.NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/sites");
+    }
+
+    private bool SiteExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Sites.Any(e => e.Id == id);
+    }
+}

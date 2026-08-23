@@ -1,0 +1,52 @@
+@page "/servicerecords"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@using Groundskeeper.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="servicerecords/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="ServiceRecords.AsQueryable()">
+    <PropertyColumn Property="servicerecord => servicerecord.AssetId" />
+    <TemplateColumn Title="Asset">
+        @($"{context.Asset.Site.Customer.Name}\\{context.Asset.Site.Name}\\{context.Asset.Name}")
+    </TemplateColumn>
+    <PropertyColumn Property="servicerecord => servicerecord.ServiceDate" />
+    <PropertyColumn Property="servicerecord => servicerecord.Title" />
+    <PropertyColumn Property="servicerecord => servicerecord.Description" />
+    <PropertyColumn Property="servicerecord => servicerecord.Notes" />
+
+    <TemplateColumn Context="servicerecord">
+        <a href="@($"servicerecords/edit?id={servicerecord.Id}")">Edit</a> |
+        <a href="@($"servicerecords/details?id={servicerecord.Id}")">Details</a> |
+        <a href="@($"servicerecords/delete?id={servicerecord.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private GroundskeeperDbContext context = default!;
+
+    List<ServiceRecord> ServiceRecords = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+
+        ServiceRecords = await context.ServiceRecords
+             .Include(sr => sr.Asset)
+                .ThenInclude(a => a.Site)
+                .ThenInclude(s => s.Customer)
+            .ToListAsync();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

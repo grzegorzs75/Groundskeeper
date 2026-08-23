@@ -1,0 +1,129 @@
+@page "/servicerecords/edit"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>ServiceRecord</h2>
+<hr />
+@if (ServiceRecord is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="ServiceRecord" OnValidSubmit="UpdateServiceRecord" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="ServiceRecord.Id" value="@ServiceRecord.Id" />
+                <div class="mb-3">
+                    <label for="assetid" class="form-label">AssetId:</label>
+                    <InputNumber id="assetid" @bind-Value="ServiceRecord.AssetId" class="form-control" />
+                    <ValidationMessage For="() => ServiceRecord.AssetId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="asset" class="form-label">Asset:</label>
+                    <InputSelect id="asset"
+                                 @bind-Value="ServiceRecord.AssetId"
+                                 class="form-control">
+                        <option value="">-- Select asset --</option>
+
+                        @foreach (var Asset in Assets)
+                        {
+                            <option value="@Asset.Id">@Asset.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => ServiceRecord.Asset" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="servicedate" class="form-label">ServiceDate:</label>
+                    <InputDate id="servicedate" @bind-Value="ServiceRecord.ServiceDate" class="form-control" />
+                    <ValidationMessage For="() => ServiceRecord.ServiceDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="ServiceRecord.Title" class="form-control" />
+                    <ValidationMessage For="() => ServiceRecord.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="ServiceRecord.Description" class="form-control" />
+                    <ValidationMessage For="() => ServiceRecord.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes:</label>
+                    <InputText id="notes" @bind-Value="ServiceRecord.Notes" class="form-control" />
+                    <ValidationMessage For="() => ServiceRecord.Notes" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/servicerecords">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private List<Asset> Assets = [];
+
+    [SupplyParameterFromForm]
+    private ServiceRecord? ServiceRecord { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        ServiceRecord ??= await context.ServiceRecords.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (ServiceRecord is null)
+        {
+            NavigationManager.NotFound();
+        }
+
+        Assets = await context.Assets
+           .OrderBy(c => c.Name)
+           .ToListAsync();
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateServiceRecord()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(ServiceRecord!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ServiceRecordExists(ServiceRecord!.Id))
+            {
+                NavigationManager.NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/servicerecords");
+    }
+
+    private bool ServiceRecordExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.ServiceRecords.Any(e => e.Id == id);
+    }
+}

@@ -1,0 +1,52 @@
+@page "/assets/details"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Asset</h2>
+    <hr />
+    @if (asset is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@asset.Name</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@asset.Description</dd>
+            <dt class="col-sm-2">SiteId</dt>
+            <dd class="col-sm-10">@asset.SiteId</dd>
+            <dt class="col-sm-2">Site</dt>
+            <dd class="col-sm-10">@asset.Site</dd>
+        </dl>
+        <div>
+            <a href="@($"/assets/edit?id={asset.Id}")">Edit</a> |
+            <a href="@($"/assets")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Asset? asset;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        asset = await context.Assets.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (asset is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+}

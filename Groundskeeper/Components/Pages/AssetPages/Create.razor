@@ -1,0 +1,85 @@
+@page "/assets/create"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Asset</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Asset" OnValidSubmit="AddAsset" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Asset.Name" class="form-control" /> 
+                <ValidationMessage For="() => Asset.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label> 
+                <InputText id="description" @bind-Value="Asset.Description" class="form-control" /> 
+                <ValidationMessage For="() => Asset.Description" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="siteid" class="form-label">SiteId:</label> 
+                <InputNumber id="siteid" @bind-Value="Asset.SiteId" class="form-control" /> 
+                <ValidationMessage For="() => Asset.SiteId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="site" class="form-label">Site:</label> 
+                
+                <InputSelect id="site"
+                             @bind-Value="Asset.SiteId"
+                             class="form-control">
+                    <option value="">-- Select site --</option>
+
+                    @foreach (var site in Sites)
+                    {
+                        <option value="@site.Id">@site.Name</option>
+                    }
+                </InputSelect>
+
+
+                <ValidationMessage For="() => Asset.Site" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/assets">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Asset Asset { get; set; } = default!;
+
+    protected override void OnInitialized() => Asset ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddAsset()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Assets.Add(Asset);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/assets");
+    }
+
+    private List<Site> Sites = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        Sites = await context.Sites
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+
+}

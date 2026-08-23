@@ -1,0 +1,91 @@
+@page "/servicerecords/create"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>ServiceRecord</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="ServiceRecord" OnValidSubmit="AddServiceRecord" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="assetid" class="form-label">AssetId:</label> 
+                <InputNumber id="assetid" @bind-Value="ServiceRecord.AssetId" class="form-control" /> 
+                <ValidationMessage For="() => ServiceRecord.AssetId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="asset" class="form-label">Asset:</label> 
+                <InputSelect id="asset"
+                             @bind-Value="ServiceRecord.AssetId"
+                             class="form-control">
+                    <option value="">-- Select asset --</option>
+
+                    @foreach (var Asset in Assets)
+                    {
+                        <option value="@Asset.Id">@Asset.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => ServiceRecord.Asset" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="servicedate" class="form-label">ServiceDate:</label> 
+                <InputDate id="servicedate" @bind-Value="ServiceRecord.ServiceDate" class="form-control" /> 
+                <ValidationMessage For="() => ServiceRecord.ServiceDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label> 
+                <InputText id="title" @bind-Value="ServiceRecord.Title" class="form-control" /> 
+                <ValidationMessage For="() => ServiceRecord.Title" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label> 
+                <InputText id="description" @bind-Value="ServiceRecord.Description" class="form-control" /> 
+                <ValidationMessage For="() => ServiceRecord.Description" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="notes" class="form-label">Notes:</label> 
+                <InputText id="notes" @bind-Value="ServiceRecord.Notes" class="form-control" /> 
+                <ValidationMessage For="() => ServiceRecord.Notes" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/servicerecords">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ServiceRecord ServiceRecord { get; set; } = default!;
+
+    private List<Asset> Assets = [];
+
+    protected override void OnInitialized() => ServiceRecord ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddServiceRecord()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.ServiceRecords.Add(ServiceRecord);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/servicerecords");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        Assets = await context.Assets
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+}

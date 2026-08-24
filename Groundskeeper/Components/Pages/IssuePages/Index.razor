@@ -1,0 +1,47 @@
+@page "/issues"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@using Groundskeeper.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="issues/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Issues">
+    <PropertyColumn Property="issue => issue.AssetId" />
+    <PropertyColumn Property="issue => issue.Asset" />
+    <PropertyColumn Property="issue => issue.ServiceRecordId" />
+    <PropertyColumn Property="issue => issue.ServiceRecord" />
+    <PropertyColumn Property="issue => issue.Title" />
+    <PropertyColumn Property="issue => issue.Description" />
+    <PropertyColumn Property="issue => issue.ReportedDate" />
+    <PropertyColumn Property="issue => issue.Priority" />
+    <PropertyColumn Property="issue => issue.Status" />
+    <PropertyColumn Property="issue => issue.ResolutionNotes" />
+    <PropertyColumn Property="issue => issue.ResolvedDate" />
+
+    <TemplateColumn Context="issue">
+        <a href="@($"issues/edit?id={issue.Id}")">Edit</a> |
+        <a href="@($"issues/details?id={issue.Id}")">Details</a> |
+        <a href="@($"issues/delete?id={issue.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private GroundskeeperDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

@@ -1,0 +1,181 @@
+@page "/issues/edit"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Issue</h2>
+<hr />
+@if (Issue is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Issue" OnValidSubmit="UpdateIssue" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Issue.Id" value="@Issue.Id" />
+                <div class="mb-3">
+                    <label for="assetid" class="form-label">AssetId:</label>
+                    <InputNumber id="assetid" @bind-Value="Issue.AssetId" class="form-control" />
+                    <ValidationMessage For="() => Issue.AssetId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="asset" class="form-label">Asset:</label>
+                    <InputSelect id="asset"
+                                 @bind-Value="Issue.AssetId"
+                                 class="form-control">
+                        <option value="">-- Select asset --</option>
+
+                        @foreach (var Asset in Assets)
+                        {
+                            <option value="@Asset.Id">@Asset.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => Issue.Asset" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="servicerecordid" class="form-label">ServiceRecordId:</label>
+                    <InputNumber id="servicerecordid" @bind-Value="Issue.ServiceRecordId" class="form-control" />
+                    <ValidationMessage For="() => Issue.ServiceRecordId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="servicerecord" class="form-label">ServiceRecord:</label>
+                    <InputSelect id="servicerecord"
+                                 @bind-Value="Issue.ServiceRecordId"
+                                 class="form-control">
+                        <option value="">-- Select service record --</option>
+
+                        @foreach (var ServiceRecord in ServiceRecords)
+                        {
+                            <option value="@ServiceRecord.Id">@ServiceRecord.Title</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="Issue.Title" class="form-control" />
+                    <ValidationMessage For="() => Issue.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="Issue.Description" class="form-control" />
+                    <ValidationMessage For="() => Issue.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="reporteddate" class="form-label">ReportedDate:</label>
+                    <InputDate id="reporteddate" @bind-Value="Issue.ReportedDate" class="form-control" />
+                    <ValidationMessage For="() => Issue.ReportedDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="priority" class="form-label">Priority:</label>
+                    <InputSelect id="priority"
+                                 @bind-Value="Issue.Priority"
+                                 class="form-control">
+                        @foreach (var priority in Enum.GetValues<IssuePriority>())
+                        {
+                            <option value="@priority">@priority</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => Issue.Priority" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status:</label>
+                    <InputSelect id="status"
+                                 @bind-Value="Issue.Status"
+                                 class="form-control">
+                        @foreach (var status in Enum.GetValues<IssueStatus>())
+                        {
+                            <option value="@status">@status</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => Issue.Status" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="resolutionnotes" class="form-label">ResolutionNotes:</label>
+                    <InputText id="resolutionnotes" @bind-Value="Issue.ResolutionNotes" class="form-control" />
+                    <ValidationMessage For="() => Issue.ResolutionNotes" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="resolveddate" class="form-label">ResolvedDate:</label>
+                    <InputDate id="resolveddate" @bind-Value="Issue.ResolvedDate" class="form-control" />
+                    <ValidationMessage For="() => Issue.ResolvedDate" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/issues">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Issue? Issue { get; set; }
+
+    private List<Asset> Assets = [];
+    private List<ServiceRecord> ServiceRecords = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Issue ??= await context.Issues.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Issue is null)
+        {
+            NavigationManager.NotFound();
+        }
+
+        Assets = await context.Assets
+           .OrderBy(c => c.Name)
+           .ToListAsync();
+
+        ServiceRecords = await context.ServiceRecords
+            .OrderBy(c => c.Title)
+            .ToListAsync();
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateIssue()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Issue!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!IssueExists(Issue!.Id))
+            {
+                NavigationManager.NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/issues");
+    }
+
+    private bool IssueExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Issues.Any(e => e.Id == id);
+    }
+}

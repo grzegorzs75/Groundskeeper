@@ -1,0 +1,95 @@
+@page "/issues/delete"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Issue</h2>
+    <hr />
+    @if (issue is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">AssetId</dt>
+            <dd class="col-sm-10">@issue.AssetId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Asset</dt>
+            <dd class="col-sm-10">@issue.Asset</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ServiceRecordId</dt>
+            <dd class="col-sm-10">@issue.ServiceRecordId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ServiceRecord</dt>
+            <dd class="col-sm-10">@issue.ServiceRecord</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@issue.Title</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@issue.Description</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ReportedDate</dt>
+            <dd class="col-sm-10">@issue.ReportedDate</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Priority</dt>
+            <dd class="col-sm-10">@issue.Priority</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@issue.Status</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ResolutionNotes</dt>
+            <dd class="col-sm-10">@issue.ResolutionNotes</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ResolvedDate</dt>
+            <dd class="col-sm-10">@issue.ResolvedDate</dd>
+        </dl>
+        <EditForm method="post" Model="issue" OnValidSubmit="DeleteIssue" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(issue is null)">Delete</button> |
+            <a href="/issues">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private Issue? issue;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        issue = await context.Issues.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (issue is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+
+    private async Task DeleteIssue()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Issues.Remove(issue!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/issues");
+    }
+}

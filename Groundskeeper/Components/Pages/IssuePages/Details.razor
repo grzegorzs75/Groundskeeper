@@ -1,0 +1,66 @@
+@page "/issues/details"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Issue</h2>
+    <hr />
+    @if (issue is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">AssetId</dt>
+            <dd class="col-sm-10">@issue.AssetId</dd>
+            <dt class="col-sm-2">Asset</dt>
+            <dd class="col-sm-10">@issue.Asset</dd>
+            <dt class="col-sm-2">ServiceRecordId</dt>
+            <dd class="col-sm-10">@issue.ServiceRecordId</dd>
+            <dt class="col-sm-2">ServiceRecord</dt>
+            <dd class="col-sm-10">@issue.ServiceRecord</dd>
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@issue.Title</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@issue.Description</dd>
+            <dt class="col-sm-2">ReportedDate</dt>
+            <dd class="col-sm-10">@issue.ReportedDate</dd>
+            <dt class="col-sm-2">Priority</dt>
+            <dd class="col-sm-10">@issue.Priority</dd>
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@issue.Status</dd>
+            <dt class="col-sm-2">ResolutionNotes</dt>
+            <dd class="col-sm-10">@issue.ResolutionNotes</dd>
+            <dt class="col-sm-2">ResolvedDate</dt>
+            <dd class="col-sm-10">@issue.ResolvedDate</dd>
+        </dl>
+        <div>
+            <a href="@($"/issues/edit?id={issue.Id}")">Edit</a> |
+            <a href="@($"/issues")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Issue? issue;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        issue = await context.Issues.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (issue is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+}

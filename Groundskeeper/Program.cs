@@ -2,6 +2,7 @@ using Groundskeeper.Components;
 
 using Groundskeeper.Data;
 using Microsoft.EntityFrameworkCore;
+using Groundskeeper.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddDbContextFactory<GroundskeeperDbContext>(options =>
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddScoped<IImageService, ImageService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

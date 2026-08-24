@@ -25,6 +25,8 @@ public class Issue
     public string? ResolutionNotes { get; set; }
 
     public DateTime? ResolvedDate { get; set; }
+
+    public ICollection<Photo> Photos { get; set; } = new List<Photo>();
 }
 
 public enum IssuePriority

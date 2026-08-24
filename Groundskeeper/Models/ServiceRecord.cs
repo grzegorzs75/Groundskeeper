@@ -22,4 +22,6 @@ public class ServiceRecord
     public string? Notes { get; set; }
 
     public ICollection<Issue> Issues { get; set; } = new List<Issue>();
+
+    public ICollection<Photo> Photos { get; set; } = new List<Photo>();
 }

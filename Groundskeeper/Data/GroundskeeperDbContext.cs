@@ -19,4 +19,6 @@ public class GroundskeeperDbContext : DbContext
     public DbSet<ServiceRecord> ServiceRecords => Set<ServiceRecord>();
 
     public DbSet<Issue> Issues => Set<Issue>();
+
+    public DbSet<Photo> Photos => Set<Photo>();
 }

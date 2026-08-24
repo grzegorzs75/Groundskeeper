@@ -4,6 +4,9 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
+@using Groundskeeper.Services
+@inject IImageService ImageService
+
 <PageTitle>Details</PageTitle>
 
 <h1>Details</h1>
@@ -40,11 +43,46 @@
             <dt class="col-sm-2">ResolvedDate</dt>
             <dd class="col-sm-10">@issue.ResolvedDate</dd>
         </dl>
+
+        <h4>Photos</h4>
+
+        <div class="mb-3">
+            <InputFile OnChange="UploadPhoto" accept="image/*" />
+        </div>
+
+        @if (issue.Photos.Any())
+        {
+            <div class="row">
+                @foreach (var photo in issue.Photos)
+                {
+                    <div class="col-md-3 mb-3">
+                        <img src="@photo.FilePath"
+                             class="img-fluid rounded"
+                             alt="@photo.Caption" />
+
+                        @if (!string.IsNullOrWhiteSpace(photo.Caption))
+                        {
+                            <div>@photo.Caption</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(uploadError))
+        {
+            <div class="alert alert-danger">
+                @uploadError
+            </div>
+        }
+
+
         <div>
             <a href="@($"/issues/edit?id={issue.Id}")">Edit</a> |
             <a href="@($"/issues")">Back to List</a>
         </div>
     }
+    
 </div>
 
 @code {
@@ -56,11 +94,74 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        issue = await context.Issues.FirstOrDefaultAsync(m => m.Id == Id);
+        issue = await context.Issues
+        .Include(sr => sr.Asset)
+            .ThenInclude(a => a.Site)
+            .ThenInclude(s => s.Customer)
+            .Include(sr => sr.Photos)
+            .FirstOrDefaultAsync(m => m.Id == Id);
 
         if (issue is null)
         {
             NavigationManager.NotFound();
         }
     }
+
+    private string? uploadError;
+
+    private async Task UploadPhoto(InputFileChangeEventArgs e)
+    {
+        uploadError = null;
+
+        var file = e.File;
+
+        const long maxFileSize = 15 * 1024 * 1024;
+
+        if (file.Size > maxFileSize)
+        {
+            uploadError = "The photo is too large. Maximum size is 15 MB.";
+            return;
+        }
+
+        try
+        {
+            await using var stream =
+                file.OpenReadStream(maxFileSize);
+
+            var relativeDirectory = Path.Combine(
+                "uploads",
+                DateTime.Now.Year.ToString(),
+                DateTime.Now.Month.ToString("00"));
+
+            var result = await ImageService.SaveImageAsync(
+                stream,
+                file.Name,
+                relativeDirectory);
+
+            var photo = new Photo
+            {
+                // Original filename supplied by the user/device
+                FileName = file.Name,
+
+                // Generated physical/web filename
+                FilePath = result.FilePath,
+
+                UploadedAt = DateTime.Now,
+
+                IssueId = issue.Id
+            };
+
+            using var db = DbFactory.CreateDbContext();
+
+            db.Photos.Add(photo);
+            await db.SaveChangesAsync();
+
+            issue.Photos.Add(photo);
+        }
+        catch (Exception ex)
+        {
+            uploadError = $"Photo upload failed: {ex.Message}";
+        }
+    }
+
 }

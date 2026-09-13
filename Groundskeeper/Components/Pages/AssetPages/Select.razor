@@ -1,13 +1,16 @@
-@page "/assets/details"
+@page "/assets/<select></select>"
 @using Microsoft.EntityFrameworkCore
 @using Groundskeeper.Models
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Details</PageTitle>
+@inject Groundskeeper.Services.WorkContext WorkContext
 
-<h1>Details</h1>
+<PageTitle>Wybierz</PageTitle>
 
+<h1>Wybierz</h1>
+
+<p>Are you sure you want to select this?</p>
 <div>
     <h2>Asset</h2>
     <hr />
@@ -17,19 +20,25 @@
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">Nazwa boiska</dt>
+            <dt class="col-sm-2">Nazwa</dt>
             <dd class="col-sm-10">@asset.Name</dd>
+        </dl>
+        <dl class="row">
             <dt class="col-sm-2">Opis</dt>
             <dd class="col-sm-10">@asset.Description</dd>
+        </dl>
+        <dl class="row">
             <dt class="col-sm-2">Obiekt</dt>
             <dd class="col-sm-10">@asset.SiteId</dd>
+        </dl>
+        <dl class="row">
             <dt class="col-sm-2">Nazwa obiektu</dt>
             <dd class="col-sm-10">@asset.Site.Name</dd>
         </dl>
-        <div>
-            <a href="@($"/assets/edit?id={asset.Id}")">Zmień</a> |
-            <a href="@($"/assets")">Powrót do listy</a>
-        </div>
+        <EditForm method="post" Model="asset" OnValidSubmit="SelectAsset" FormName="select" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(asset is null)">Wybierz</button> |
+            <a href="/assets">Powrót do listy</a>
+        </EditForm>
     }
 </div>
 
@@ -50,5 +59,13 @@
         {
             NavigationManager.NotFound();
         }
+    }
+
+    private async Task SelectAsset()
+    {
+        using var context = DbFactory.CreateDbContext();
+        WorkContext.AssetId = asset.Id;
+
+        NavigationManager.NavigateTo("/assets");
     }
 }

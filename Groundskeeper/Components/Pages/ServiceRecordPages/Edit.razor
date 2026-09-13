@@ -12,7 +12,7 @@
 <hr />
 @if (ServiceRecord is null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Pobieranie...</em></p>
 }
 else
 {
@@ -22,11 +22,7 @@ else
                 <DataAnnotationsValidator />
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="ServiceRecord.Id" value="@ServiceRecord.Id" />
-                <div class="mb-3">
-                    <label for="assetid" class="form-label">AssetId:</label>
-                    <InputNumber id="assetid" @bind-Value="ServiceRecord.AssetId" class="form-control" />
-                    <ValidationMessage For="() => ServiceRecord.AssetId" class="text-danger" />
-                </div>
+                
                 <div class="mb-3">
                     <label for="asset" class="form-label">Asset:</label>
                     <InputSelect id="asset"
@@ -68,7 +64,7 @@ else
 }
 
 <div>
-    <a href="/servicerecords">Back to List</a>
+    <a href="/servicerecords">Powrót do listy</a>
 </div>
 
 @code {

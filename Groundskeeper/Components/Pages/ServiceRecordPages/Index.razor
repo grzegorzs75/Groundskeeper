@@ -7,28 +7,28 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Kartoteka zabiegów</PageTitle>
 
-<h1>Index</h1>
+<h1>Karoteka zabiegów</h1>
 
 <p>
-    <a href="servicerecords/create">Create New</a>
+    <a href="servicerecords/create">Dodaj zabieg</a>
 </p>
 
 <QuickGrid Class="table" Items="ServiceRecords.AsQueryable()">
-    <PropertyColumn Property="servicerecord => servicerecord.AssetId" />
-    <TemplateColumn Title="Asset">
+    
+    <TemplateColumn Title="Boisko">
         @($"{context.Asset.Site.Customer.Name}\\{context.Asset.Site.Name}\\{context.Asset.Name}")
     </TemplateColumn>
-    <PropertyColumn Property="servicerecord => servicerecord.ServiceDate" />
-    <PropertyColumn Property="servicerecord => servicerecord.Title" />
-    <PropertyColumn Property="servicerecord => servicerecord.Description" />
-    <PropertyColumn Property="servicerecord => servicerecord.Notes" />
+    <PropertyColumn Property="servicerecord => servicerecord.ServiceDate" Format="d" Title="Data"/>
+    <PropertyColumn Property="servicerecord => servicerecord.Title" Title="Nazwa"/>
+    <PropertyColumn Property="servicerecord => servicerecord.Description" Title="Opis wew."/>
+    <PropertyColumn Property="servicerecord => servicerecord.Notes" Title="Opis zew."/>
 
     <TemplateColumn Context="servicerecord">
-        <a href="@($"servicerecords/edit?id={servicerecord.Id}")">Edit</a> |
-        <a href="@($"servicerecords/details?id={servicerecord.Id}")">Details</a> |
-        <a href="@($"servicerecords/delete?id={servicerecord.Id}")">Delete</a>
+        <a href="@($"servicerecords/edit?id={servicerecord.Id}")">Zmień</a> |
+        <a href="@($"servicerecords/details?id={servicerecord.Id}")">Szczegóły</a> |
+        <a href="@($"servicerecords/delete?id={servicerecord.Id}")">Usuń</a>
     </TemplateColumn>
 </QuickGrid>
 

@@ -13,7 +13,7 @@
     <hr />
     @if (customer is null)
     {
-        <p><em>Loading...</em></p>
+        <p><em>Pobieranie...</em></p>
     }
     else {
         <dl class="row">
@@ -30,7 +30,7 @@
         </dl>
         <div>
             <a href="@($"/customers/edit?id={customer.Id}")">Edit</a> |
-            <a href="@($"/customers")">Back to List</a>
+            <a href="@($"/customers")">Powrót do listy</a>
         </div>
     }
 </div>

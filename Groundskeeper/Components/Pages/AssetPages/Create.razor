@@ -4,11 +4,11 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Nowe</PageTitle>
 
-<h1>Create</h1>
+<h1>Nowe</h1>
 
-<h2>Asset</h2>
+<h2>Boisko</h2>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -16,27 +16,23 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="name" class="form-label">Name:</label> 
+                <label for="name" class="form-label">Nazwa boiska:</label> 
                 <InputText id="name" @bind-Value="Asset.Name" class="form-control" /> 
                 <ValidationMessage For="() => Asset.Name" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="description" class="form-label">Description:</label> 
+                <label for="description" class="form-label">Opis:</label> 
                 <InputText id="description" @bind-Value="Asset.Description" class="form-control" /> 
                 <ValidationMessage For="() => Asset.Description" class="text-danger" /> 
             </div>        
+                 
             <div class="mb-3">
-                <label for="siteid" class="form-label">SiteId:</label> 
-                <InputNumber id="siteid" @bind-Value="Asset.SiteId" class="form-control" /> 
-                <ValidationMessage For="() => Asset.SiteId" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="site" class="form-label">Site:</label> 
+                <label for="site" class="form-label">Obiekt:</label> 
                 
                 <InputSelect id="site"
                              @bind-Value="Asset.SiteId"
                              class="form-control">
-                    <option value="">-- Select site --</option>
+                    <option value="">-- Wybierz obiekt --</option>
 
                     @foreach (var site in Sites)
                     {
@@ -47,13 +43,13 @@
 
                 <ValidationMessage For="() => Asset.Site" class="text-danger" /> 
             </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-primary">Utwórz</button>
         </EditForm>
     </div>
 </div>
 
 <div>
-    <a href="/assets">Back to List</a>
+    <a href="/assets">Powrót do listy</a>
 </div>
 
 @code {

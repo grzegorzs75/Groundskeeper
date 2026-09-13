@@ -4,31 +4,31 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Szczegóły obiektu</PageTitle>
 
-<h1>Details</h1>
+<h1>Szczxegóły</h1>
 
 <div>
-    <h2>Site</h2>
+    <h2>Obiekt</h2>
     <hr />
     @if (site is null)
     {
-        <p><em>Loading...</em></p>
+        <p><em>Pobieranie...</em></p>
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">Name</dt>
+            <dt class="col-sm-2">Nazwa obiektu</dt>
             <dd class="col-sm-10">@site.Name</dd>
-            <dt class="col-sm-2">Address</dt>
+            <dt class="col-sm-2">Adres</dt>
             <dd class="col-sm-10">@site.Address</dd>
-            <dt class="col-sm-2">CustomerId</dt>
+            <dt class="col-sm-2">Id klienta</dt>
             <dd class="col-sm-10">@site.CustomerId</dd>
-            <dt class="col-sm-2">Customer</dt>
-            <dd class="col-sm-10">@site.Customer</dd>
+            <dt class="col-sm-2">Nazwa klienta</dt>
+            <dd class="col-sm-10">@site.Customer.Name</dd>
         </dl>
         <div>
-            <a href="@($"/sites/edit?id={site.Id}")">Edit</a> |
-            <a href="@($"/sites")">Back to List</a>
+            <a href="@($"/sites/edit?id={site.Id}")">Zmień</a> |
+            <a href="@($"/sites")">Powrót do listy</a>
         </div>
     }
 </div>
@@ -42,7 +42,9 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        site = await context.Sites.FirstOrDefaultAsync(m => m.Id == Id);
+        site = await context.Sites
+            .Include(s => s.Customer)
+            .FirstOrDefaultAsync(m => m.Id == Id);
 
         if (site is null)
         {

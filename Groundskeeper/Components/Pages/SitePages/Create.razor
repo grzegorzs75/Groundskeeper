@@ -25,11 +25,7 @@
                 <InputText id="address" @bind-Value="Site.Address" class="form-control" /> 
                 <ValidationMessage For="() => Site.Address" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
-                <label for="customerid" class="form-label">CustomerId:</label> 
-                <InputNumber id="customerid" @bind-Value="Site.CustomerId" class="form-control" /> 
-                <ValidationMessage For="() => Site.CustomerId" class="text-danger" /> 
-            </div>        
+                
             <div class="mb-3">
                 <label for="customer" class="form-label">Customer:</label> 
                 
@@ -54,7 +50,7 @@
 </div>
 
 <div>
-    <a href="/sites">Back to List</a>
+    <a href="/sites">Powrót do listy</a>
 </div>
 
 @code {

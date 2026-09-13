@@ -7,34 +7,33 @@
 @inject IWebHostEnvironment Environment
 @inject IImageService ImageService
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Szczegóły zabiegu</PageTitle>
 
-<h1>Details</h1>
+<h1>Szczegóły zabiegu</h1>
 
 <div>
-    <h2>ServiceRecord</h2>
+    <h2>Zabieg</h2>
     <hr />
     @if (servicerecord is null)
     {
-        <p><em>Loading...</em></p>
+        <p><em>Pobieranie...</em></p>
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">AssetId</dt>
-            <dd class="col-sm-10">@servicerecord.AssetId</dd>
-            <dt class="col-sm-2">Asset</dt>
-            <dd class="col-sm-10">@servicerecord.Asset</dd>
-            <dt class="col-sm-2">ServiceDate</dt>
-            <dd class="col-sm-10">@servicerecord.ServiceDate</dd>
-            <dt class="col-sm-2">Title</dt>
+            
+            <dt class="col-sm-2">Boisko</dt>
+            <dd class="col-sm-10">@($"{servicerecord.Asset.Site.Customer.Name}\\{servicerecord.Asset.Site.Name}\\{servicerecord.Asset.Name}")</dd>
+            <dt class="col-sm-2">Data</dt>
+            <dd class="col-sm-10">@servicerecord.ServiceDate.ToString("d")</dd>
+            <dt class="col-sm-2">Nazwa</dt>
             <dd class="col-sm-10">@servicerecord.Title</dd>
-            <dt class="col-sm-2">Description</dt>
+            <dt class="col-sm-2">Opis wewnętrzny</dt>
             <dd class="col-sm-10">@servicerecord.Description</dd>
-            <dt class="col-sm-2">Notes</dt>
+            <dt class="col-sm-2">Opis zewnętrzny</dt>
             <dd class="col-sm-10">@servicerecord.Notes</dd>
         </dl>
 
-        <h4>Photos</h4>
+        <h4>Zdjęcia</h4>
 
         <div class="mb-3">
             <InputFile OnChange="UploadPhoto" accept="image/*" />
@@ -66,8 +65,8 @@
             </div>
         }
         <div>
-            <a href="@($"/servicerecords/edit?id={servicerecord.Id}")">Edit</a> |
-            <a href="@($"/servicerecords")">Back to List</a>
+            <a href="@($"/servicerecords/edit?id={servicerecord.Id}")">Zmień</a> |
+            <a href="@($"/servicerecords")">Powrót do listy</a>
         </div>
     }
 </div>

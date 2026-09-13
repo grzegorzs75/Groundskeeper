@@ -7,24 +7,23 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Obiekty</PageTitle>
 
-<h1>Index</h1>
+<h1>Obiekty</h1>
 
 <p>
-    <a href="sites/create">Create New</a>
+    <a href="sites/create">Nowy obiekt</a>
 </p>
 
 <QuickGrid Class="table" Items="Sites.AsQueryable()">
-    <PropertyColumn Property="site => site.Name" />
-    <PropertyColumn Property="site => site.Address" />
-    <PropertyColumn Property="site => site.CustomerId" />
-    <PropertyColumn Property="site => site.Customer.Name" />
+    <PropertyColumn Property="site => site.Name" Title="Nazwa obiektu" />
+    <PropertyColumn Property="site => site.Address" Title="Adres" />
+    <PropertyColumn Property="site => site.Customer.Name" Title="Nazwa klienta" />
 
     <TemplateColumn Context="site">
-        <a href="@($"sites/edit?id={site.Id}")">Edit</a> |
-        <a href="@($"sites/details?id={site.Id}")">Details</a> |
-        <a href="@($"sites/delete?id={site.Id}")">Delete</a>
+        <a href="@($"sites/edit?id={site.Id}")">Zmień</a> |
+        <a href="@($"sites/details?id={site.Id}")">Szczegóły</a> |
+        <a href="@($"sites/delete?id={site.Id}")">Usuń</a>
     </TemplateColumn>
 </QuickGrid>
 

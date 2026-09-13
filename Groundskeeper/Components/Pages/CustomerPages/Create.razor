@@ -6,9 +6,9 @@
 
 <PageTitle>Create</PageTitle>
 
-<h1>Create</h1>
+<h1>Nowy</h1>
 
-<h2>Customer</h2>
+<h2>Klient</h2>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -16,10 +16,11 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="name" class="form-label">Name:</label> 
+                <label for="name" class="form-label">Nazwa klienta:</label> 
                 <InputText id="name" @bind-Value="Customer.Name" class="form-control" /> 
                 <ValidationMessage For="() => Customer.Name" class="text-danger" /> 
             </div>        
+<!--
             <div class="mb-3">
                 <label for="contactname" class="form-label">ContactName:</label> 
                 <InputText id="contactname" @bind-Value="Customer.ContactName" class="form-control" /> 
@@ -39,14 +40,15 @@
                 <label for="notes" class="form-label">Notes:</label> 
                 <InputText id="notes" @bind-Value="Customer.Notes" class="form-control" /> 
                 <ValidationMessage For="() => Customer.Notes" class="text-danger" /> 
-            </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+            -->
+            <button type="submit" class="btn btn-primary">Utwórz</button>
         </EditForm>
     </div>
 </div>
 
 <div>
-    <a href="/customers">Back to List</a>
+    <a href="/customers">Powrót do listy</a>
 </div>
 
 @code {

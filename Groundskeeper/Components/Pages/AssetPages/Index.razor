@@ -7,24 +7,26 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Boiska</PageTitle>
 
-<h1>Index</h1>
+<h1>Boiska</h1>
 
 <p>
-    <a href="assets/create">Create New</a>
+    <a href="assets/create">Nowe</a>
 </p>
 
-<QuickGrid Class="table" Items="Assets.AsQueryable()">
-    <PropertyColumn Property="asset => asset.Name" />
-    <PropertyColumn Property="asset => asset.Description" />
-    <PropertyColumn Property="asset => asset.SiteId" />
-    <PropertyColumn Property="asset => asset.Site.Name" />
+<QuickGrid Class="table" Items="Assets.AsQueryable()" >
+    <PropertyColumn Property="asset => asset.Name" Title="Nazwa boiska" />
+    <PropertyColumn Property="asset => asset.Description" Title="Opis" />
+   
+    <PropertyColumn Property="asset => asset.Site.Name" Title="Nazwa obiektu" />
 
     <TemplateColumn Context="asset">
-        <a href="@($"assets/edit?id={asset.Id}")">Edit</a> |
-        <a href="@($"assets/details?id={asset.Id}")">Details</a> |
-        <a href="@($"assets/delete?id={asset.Id}")">Delete</a>
+        <a href="@($"assets/edit?id={asset.Id}")">Zmień</a> |
+        <a href="@($"assets/details?id={asset.Id}")">Szczegóły</a> |
+        <a href="@($"assets/delete?id={asset.Id}")">Usuń</a> |
+
+        <a href="@($"assets/select?id={asset.Id}")">Wybierz jako bieżące</a>
     </TemplateColumn>
 </QuickGrid>
 

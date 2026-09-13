@@ -4,15 +4,15 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Zmień obiekt</PageTitle>
 
-<h1>Edit</h1>
+<h1>Zmień</h1>
 
-<h2>Site</h2>
+<h2>Obiekt</h2>
 <hr />
 @if (Site is null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Pobieranie...</em></p>
 }
 else
 {
@@ -23,27 +23,23 @@ else
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="Site.Id" value="@Site.Id" />
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name:</label>
+                    <label for="name" class="form-label">Nazwa obiektu:</label>
                     <InputText id="name" @bind-Value="Site.Name" class="form-control" />
                     <ValidationMessage For="() => Site.Name" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address:</label>
+                    <label for="address" class="form-label">Adres:</label>
                     <InputText id="address" @bind-Value="Site.Address" class="form-control" />
                     <ValidationMessage For="() => Site.Address" class="text-danger" />
                 </div>
+               
                 <div class="mb-3">
-                    <label for="customerid" class="form-label">CustomerId:</label>
-                    <InputNumber id="customerid" @bind-Value="Site.CustomerId" class="form-control" />
-                    <ValidationMessage For="() => Site.CustomerId" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="customer" class="form-label">Customer:</label>
+                    <label for="customer" class="form-label">Nazwa klienta:</label>
                    
                     <InputSelect id="customer"
                                  @bind-Value="Site.CustomerId"
                                  class="form-control">
-                        <option value="">-- Select customer --</option>
+                        <option value="">-- Wybierz klienta --</option>
 
                         @foreach (var customer in Customers)
                         {
@@ -53,14 +49,14 @@ else
 
                     <ValidationMessage For="() => Site.Customer" class="text-danger" />
                 </div>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">Zmień</button>
             </EditForm>
         </div>
     </div>
 }
 
 <div>
-    <a href="/sites">Back to List</a>
+    <a href="/sites">Powrót do listy</a>
 </div>
 
 @code {

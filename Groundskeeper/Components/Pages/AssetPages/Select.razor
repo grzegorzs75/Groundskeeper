@@ -1,4 +1,4 @@
-@page "/assets/<select></select>"
+@page "/assets/select"
 @using Microsoft.EntityFrameworkCore
 @using Groundskeeper.Models
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
@@ -10,9 +10,9 @@
 
 <h1>Wybierz</h1>
 
-<p>Are you sure you want to select this?</p>
+<p>Czy chcesz ustawić to boisko jako bieżące?</p>
 <div>
-    <h2>Asset</h2>
+    <h2>Boisko</h2>
     <hr />
     @if (asset is null)
     {
@@ -20,7 +20,7 @@
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">Nazwa</dt>
+            <dt class="col-sm-2">Nazwa boiska</dt>
             <dd class="col-sm-10">@asset.Name</dd>
         </dl>
         <dl class="row">

@@ -21,4 +21,21 @@ public class GroundskeeperDbContext : DbContext
     public DbSet<Issue> Issues => Set<Issue>();
 
     public DbSet<Photo> Photos => Set<Photo>();
+
+    public DbSet<AppUser> AppUsers => Set<AppUser>(); protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AppUser>()
+            .HasIndex(x => x.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<AppUser>()
+            .HasOne(x => x.Customer)
+            .WithMany()
+            .HasForeignKey(x => x.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
+
 }

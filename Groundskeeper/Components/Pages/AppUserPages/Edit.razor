@@ -1,0 +1,170 @@
+@page "/appusers/edit"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>AppUser</h2>
+<hr />
+@if (AppUser is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="AppUser" OnValidSubmit="UpdateAppUser" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="AppUser.Id" value="@AppUser.Id" />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="AppUser.Name" class="form-control" />
+                    <ValidationMessage For="() => AppUser.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="AppUser.Email" class="form-control" />
+                    <ValidationMessage For="() => AppUser.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="passwordhash" class="form-label">PasswordHash:</label>
+                    <InputText id="passwordhash" @bind-Value="AppUser.PasswordHash" class="form-control" />
+                    <ValidationMessage For="() => AppUser.PasswordHash" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="usergroup" class="form-label">UserGroup:</label>
+                    <InputSelect @bind-Value="AppUser.UserGroup" class="form-select">
+                        @foreach (var group in Enum.GetValues<UserGroup>())
+                        {
+                            <option value="@group">@group</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => AppUser.UserGroup" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="customerid" class="form-label">CustomerId:</label>
+                    <InputNumber id="customerid" @bind-Value="AppUser.CustomerId" class="form-control" />
+                    <ValidationMessage For="() => AppUser.CustomerId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="customer" class="form-label">Customer:</label>
+                    <InputSelect id="customer"
+                                 @bind-Value="AppUser.CustomerId"
+                                 class="form-control">
+                        <option value="">-- Wybierz klienta --</option>
+
+                        @foreach (var customer in Customers)
+                        {
+                            <option value="@customer.Id">@customer.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => AppUser.Customer" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="active" class="form-label">Active:</label>
+                    <InputCheckbox id="active" @bind-Value="AppUser.Active" class="form-check-input" />
+                    <ValidationMessage For="() => AppUser.Active" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/appusers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private AppUser? AppUser { get; set; }
+
+    private List<Customer> Customers = [];
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        AppUser ??= await context.AppUsers.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (AppUser is null)
+        {
+            NavigationManager.NotFound();
+        }
+
+
+        Customers = await context.Customers
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateAppUser()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(AppUser!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!AppUserExists(AppUser!.Id))
+            {
+                NavigationManager.NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/appusers");
+    }
+
+    private bool AppUserExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.AppUsers.Any(e => e.Id == id);
+    }
+
+    private UserGroup? id2UserGroup(int i)
+    {
+        switch (i)
+        {
+            case 1: return UserGroup.Admin;
+            case 2: return UserGroup.Employee;
+            case 3: return UserGroup.Customer;
+
+        }
+        return null;
+    }
+
+    private int UserGroup2id(UserGroup userGroup)
+    {
+        return (int)userGroup;
+    }
+
+    private string usergroup2name(UserGroup userGroup)
+    {
+        switch (userGroup)
+        {
+            case UserGroup.Admin: return "Administratorzy";
+            case UserGroup.Employee: return "Pracownicy";
+            case UserGroup.Customer: return "Klienci";
+
+        }
+        return "- brak -";
+    }
+}

@@ -5,11 +5,11 @@
 @inject NavigationManager NavigationManager
 @inject Groundskeeper.Services.WorkContext WorkContext
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Nowy zabieg</PageTitle>
 
-<h1>Create</h1>
+<h1>Dodaj</h1>
 
-<h2>ServiceRecord</h2>
+<h2>Zabieg</h2>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,11 +18,11 @@
             <ValidationSummary class="text-danger" role="alert"/>
            
             <div class="mb-3">
-                <label for="asset" class="form-label">Asset:</label> 
+                <label for="asset" class="form-label">Boisko:</label> 
                 <InputSelect id="asset"
                              @bind-Value="ServiceRecord.AssetId"
                              class="form-control">
-                    <option value="">-- Select asset --</option>
+                    <option value="">-- Wybierz boisko --</option>
 
                     @foreach (var Asset in Assets)
                     {
@@ -32,26 +32,26 @@
                 <ValidationMessage For="() => ServiceRecord.Asset" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="servicedate" class="form-label">ServiceDate:</label> 
+                <label for="servicedate" class="form-label">Data zabiegu:</label> 
                 <InputDate id="servicedate" @bind-Value="ServiceRecord.ServiceDate" class="form-control" /> 
                 <ValidationMessage For="() => ServiceRecord.ServiceDate" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="title" class="form-label">Title:</label> 
+                <label for="title" class="form-label">Nazwa zabiegu:</label> 
                 <InputText id="title" @bind-Value="ServiceRecord.Title" class="form-control" /> 
                 <ValidationMessage For="() => ServiceRecord.Title" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="description" class="form-label">Description:</label> 
+                <label for="description" class="form-label">Opis wewnętrzny:</label> 
                 <InputText id="description" @bind-Value="ServiceRecord.Description" class="form-control" /> 
                 <ValidationMessage For="() => ServiceRecord.Description" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="notes" class="form-label">Notes:</label> 
+                <label for="notes" class="form-label">Opis zewnętrzny:</label>
                 <InputText id="notes" @bind-Value="ServiceRecord.Notes" class="form-control" /> 
                 <ValidationMessage For="() => ServiceRecord.Notes" class="text-danger" /> 
             </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-primary">Dodaj</button>
         </EditForm>
     </div>
 </div>

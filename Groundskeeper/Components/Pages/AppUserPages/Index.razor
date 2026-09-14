@@ -1,0 +1,61 @@
+@page "/appusers"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@using Groundskeeper.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Użytkownicy</PageTitle>
+
+<h1>Użytkownicy</h1>
+
+<p>
+    <a href="appusers/create">Nowy użytkownik</a>
+</p>
+
+<QuickGrid Class="table" Items="AppUsers.AsQueryable()">
+    <PropertyColumn Property="appuser => appuser.Name" title="Nazwa" />
+    <PropertyColumn Property="appuser => appuser.Email" />
+    <!--<PropertyColumn Property="appuser => appuser.PasswordHash" />-->
+    <PropertyColumn Property="appuser => usergroup2name(appuser.UserGroup)" title="Grupa" />
+    <!--<PropertyColumn Property="appuser => appuser.CustomerId" />-->
+    <PropertyColumn Property="appuser => appuser.Customer.Name" title="Klient"/>
+    <PropertyColumn Property="appuser => appuser.Active" title="Aktywny"/>
+
+    <TemplateColumn Context="appuser">
+        <a href="@($"appusers/edit?id={appuser.Id}")">Zmień</a> |
+        <a href="@($"appusers/details?id={appuser.Id}")">Szczegóły</a> |
+        <a href="@($"appusers/delete?id={appuser.Id}")">Usuń</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private GroundskeeperDbContext context = default!;
+
+    List<AppUser> AppUsers = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+
+        AppUsers = await context.AppUsers
+            .Include(s => s.Customer)
+            .ToListAsync();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    private string usergroup2name(UserGroup userGroup)
+    {
+        switch(userGroup)
+        {
+            case UserGroup.Admin: return "Administratorzy";
+            case UserGroup.Employee: return "Pracownicy";
+            case UserGroup.Customer: return "Klienci";
+
+        }
+        return "- brak -";
+    }
+}

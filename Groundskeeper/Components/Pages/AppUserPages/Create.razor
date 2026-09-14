@@ -1,0 +1,104 @@
+@page "/appusers/create"
+@using Microsoft.EntityFrameworkCore
+@using Groundskeeper.Models
+@inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>AppUser</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="AppUser" OnValidSubmit="AddAppUser" FormName="createappuser" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="AppUser.Name" class="form-control" /> 
+                <ValidationMessage For="() => AppUser.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label> 
+                <InputText id="email" @bind-Value="AppUser.Email" class="form-control" /> 
+                <ValidationMessage For="() => AppUser.Email" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="passwordhash" class="form-label">PasswordHash:</label> 
+                <InputText id="passwordhash" @bind-Value="AppUser.PasswordHash" class="form-control" /> 
+                <ValidationMessage For="() => AppUser.PasswordHash" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="usergroup" class="form-label">UserGroup:</label> 
+                <InputSelect @bind-Value="AppUser.UserGroup" class="form-select">
+                    @foreach (var group in Enum.GetValues<UserGroup>())
+                    {
+                        <option value="@group">@group</option>
+                    }
+                </InputSelect>
+
+
+                <ValidationMessage For="() => AppUser.UserGroup" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="customerid" class="form-label">CustomerId:</label> 
+                <InputNumber id="customerid" @bind-Value="AppUser.CustomerId" class="form-control" /> 
+                <ValidationMessage For="() => AppUser.CustomerId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="customer" class="form-label">Klient:</label>
+
+                <InputSelect id="customer"
+                             @bind-Value="AppUser.CustomerId"
+                             class="form-control">
+                    <option value="">-- Wybierz klienta --</option>
+
+                    @foreach (var customer in Customers)
+                    {
+                        <option value="@customer.Id">@customer.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => AppUser.Customer" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="active" class="form-label">Active:</label> 
+                <InputCheckbox id="active" @bind-Value="AppUser.Active" class="form-check-input" /> 
+                <ValidationMessage For="() => AppUser.Active" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/appusers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private AppUser AppUser { get; set; } = default!;
+
+    private List<Customer> Customers = [];
+
+    protected override void OnInitialized() => AppUser ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddAppUser()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.AppUsers.Add(AppUser);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/appusers");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        Customers = await context.Customers
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+}

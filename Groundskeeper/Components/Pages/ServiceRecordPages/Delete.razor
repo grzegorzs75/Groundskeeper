@@ -8,9 +8,9 @@
 
 <h1>Usuń</h1>
 
-<p>Are you sure you want to delete this?</p>
+<p>Czy na pewno chcesz usunąć ten zabieg?</p>
 <div>
-    <h2>ServiceRecord</h2>
+    <h2>Zabieg</h2>
     <hr />
     @if (servicerecord is null)
     {
@@ -18,27 +18,27 @@
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">AssetId</dt>
+            <dt class="col-sm-2">Id boiska</dt>
             <dd class="col-sm-10">@servicerecord.AssetId</dd>
         </dl>
         <dl class="row">
-            <dt class="col-sm-2">Asset</dt>
+            <dt class="col-sm-2">Nazwa boiska</dt>
             <dd class="col-sm-10">@servicerecord.Asset.Name</dd>
         </dl>
         <dl class="row">
-            <dt class="col-sm-2">ServiceDate</dt>
+            <dt class="col-sm-2">Data zabiegu</dt>
             <dd class="col-sm-10">@servicerecord.ServiceDate.ToString("d")</dd>
         </dl>
         <dl class="row">
-            <dt class="col-sm-2">Title</dt>
+            <dt class="col-sm-2">Nazwa zabiegu</dt>
             <dd class="col-sm-10">@servicerecord.Title</dd>
         </dl>
         <dl class="row">
-            <dt class="col-sm-2">Description</dt>
+            <dt class="col-sm-2">Opis wewnętrzny</dt>
             <dd class="col-sm-10">@servicerecord.Description</dd>
         </dl>
         <dl class="row">
-            <dt class="col-sm-2">Notes</dt>
+            <dt class="col-sm-2">Opis zewnętrzny</dt>
             <dd class="col-sm-10">@servicerecord.Notes</dd>
         </dl>
         <EditForm method="post" Model="servicerecord" OnValidSubmit="DeleteServiceRecord" FormName="delete" Enhance>

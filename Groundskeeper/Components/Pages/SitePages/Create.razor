@@ -16,23 +16,23 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="name" class="form-label">Name:</label> 
+                <label for="name" class="form-label">Nazwa obiektu:</label> 
                 <InputText id="name" @bind-Value="Site.Name" class="form-control" /> 
                 <ValidationMessage For="() => Site.Name" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="address" class="form-label">Address:</label> 
+                <label for="address" class="form-label">Adres:</label> 
                 <InputText id="address" @bind-Value="Site.Address" class="form-control" /> 
                 <ValidationMessage For="() => Site.Address" class="text-danger" /> 
             </div>        
                 
             <div class="mb-3">
-                <label for="customer" class="form-label">Customer:</label> 
+                <label for="customer" class="form-label">Klient:</label> 
                 
                 <InputSelect id="customer"
                              @bind-Value="Site.CustomerId"
                              class="form-control">
-                    <option value="">-- Select customer --</option>
+                    <option value="">-- Wybierz klienta --</option>
 
                     @foreach (var customer in Customers)
                     {

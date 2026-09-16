@@ -1,8 +1,14 @@
 @page "/appusers/create"
-@using Microsoft.EntityFrameworkCore
 @using Groundskeeper.Models
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
+
+@using Microsoft.AspNetCore.Identity
+
+@attribute [Authorize(Roles = "Admin")]
+
 
 <PageTitle>Create</PageTitle>
 
@@ -77,6 +83,7 @@
 </div>
 
 @code {
+    
     [SupplyParameterFromForm]
     private AppUser AppUser { get; set; } = default!;
 
@@ -88,7 +95,25 @@
     private async Task AddAppUser()
     {
         using var context = DbFactory.CreateDbContext();
-        context.AppUsers.Add(AppUser);
+
+        var user = new AppUser
+        {
+            Name = AppUser.Name,
+            Email = AppUser.Email.Trim().ToLowerInvariant(),
+            UserGroup = AppUser.UserGroup,
+            /*CustomerId = AppUser.UserGroup == UserGroup.Customer
+                ? AppUser.CustomerId
+                : null
+                */
+            CustomerId = AppUser.CustomerId
+
+        };
+
+        var hasher = new PasswordHasher<AppUser>();
+
+        user.PasswordHash = hasher.HashPassword(user, AppUser.PasswordHash);
+
+        context.AppUsers.Add(user);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/appusers");
     }

@@ -7,6 +7,12 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
+
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+
 <PageTitle>Użytkownicy</PageTitle>
 
 <h1>Użytkownicy</h1>

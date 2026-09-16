@@ -1,6 +1,33 @@
-﻿<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+﻿@using Groundskeeper.Components.Pages
+@using Microsoft.AspNetCore.Components.Authorization
+<CascadingAuthenticationState>
+
+<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+
+        <AuthorizeRouteView RouteData="routeData"
+                            DefaultLayout="typeof(Layout.MainLayout)">
+
+            <NotAuthorized Context="authState">
+
+                @if (authState.User.Identity?.IsAuthenticated == true)
+                {
+                    <LayoutView Layout="typeof(Layout.MainLayout)">
+                        <h3>Access denied</h3>
+                        <p>You do not have permission to view this page.</p>
+                    </LayoutView>
+                }
+                else
+                {
+                        <a href="/login">Login</a>
+                }
+
+            </NotAuthorized>
+
+        </AuthorizeRouteView>
+
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
+
     </Found>
 </Router>
+</CascadingAuthenticationState>

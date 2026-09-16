@@ -1,0 +1,26 @@
+﻿@page "/login"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [AllowAnonymous]
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+<form method="post" action="/account/login">
+                 
+    <div class="mb-3">
+        <label class="form-label">Email:</label> 
+        <Input name="email" class="form-control" required type="email"/>
+            </div>        
+    <div class="mb-3">
+        <label class="form-label">Hasło:</label> 
+        <Input name="password" class="form-control" required type="password"/> 
+        
+    </div>        
+
+    <button type="submit" class="btn btn-primary">Zaloguj</button>
+</form>
+
+

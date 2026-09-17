@@ -6,6 +6,11 @@
 
 @inject Groundskeeper.Services.WorkContext WorkContext
 
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin, Employee")]
+
+
 <PageTitle>Wybierz</PageTitle>
 
 <h1>Wybierz</h1>

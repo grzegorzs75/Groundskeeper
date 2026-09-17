@@ -7,6 +7,12 @@
 @inject IWebHostEnvironment Environment
 @inject IImageService ImageService
 
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+
+
 <PageTitle>Szczegóły zabiegu</PageTitle>
 
 <h1>Szczegóły zabiegu</h1>
@@ -27,17 +33,24 @@
             <dd class="col-sm-10">@servicerecord.ServiceDate.ToString("d")</dd>
             <dt class="col-sm-2">Nazwa</dt>
             <dd class="col-sm-10">@servicerecord.Title</dd>
-            <dt class="col-sm-2">Opis wewnętrzny</dt>
-            <dd class="col-sm-10">@servicerecord.Description</dd>
+
+            <AuthorizeView Roles="Admin, Employee">
+                <dt class="col-sm-2">Opis wewnętrzny</dt>
+                <dd class="col-sm-10">@servicerecord.Description</dd>
+            </AuthorizeView>
             <dt class="col-sm-2">Opis zewnętrzny</dt>
             <dd class="col-sm-10">@servicerecord.Notes</dd>
         </dl>
 
         <h4>Zdjęcia</h4>
 
+<AuthorizeView Roles="Admin, Employee">
+
         <div class="mb-3">
             <InputFile OnChange="UploadPhoto" accept="image/*" />
         </div>
+
+</AuthorizeView>
 
         @if (servicerecord.Photos.Any())
         {
@@ -65,8 +78,11 @@
             </div>
         }
         <div>
+<AuthorizeView Roles="Admin, Employee">
             <a href="@($"/servicerecords/edit?id={servicerecord.Id}")">Zmień</a> |
-            <a href="@($"/servicerecords")">Powrót do listy</a>
+</AuthorizeView>            
+            
+    <a href="@($"/servicerecords")">Powrót do listy</a>
         </div>
     }
 </div>

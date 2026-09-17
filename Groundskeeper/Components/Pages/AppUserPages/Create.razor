@@ -1,12 +1,12 @@
 @page "/appusers/create"
 @using Groundskeeper.Models
-@using Microsoft.AspNetCore.Authorization
+
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
 @using Microsoft.AspNetCore.Identity
-
+@using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Admin")]
 
 

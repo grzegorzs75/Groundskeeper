@@ -6,14 +6,21 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
 
 <PageTitle>Boiska</PageTitle>
 
 <h1>Boiska</h1>
 
+<AuthorizeView Roles="Admin">
 <p>
     <a href="assets/create">Nowe boisko</a>
 </p>
+</AuthorizeView>
 
 <QuickGrid Class="table" Items="Assets.AsQueryable()" >
     <PropertyColumn Property="asset => asset.Name" Title="Nazwa boiska" />
@@ -22,11 +29,14 @@
     <PropertyColumn Property="asset => asset.Site.Name" Title="Nazwa obiektu" />
 
     <TemplateColumn Context="asset">
+    <AuthorizeView Roles="Admin">
         <a href="@($"assets/edit?id={asset.Id}")">Zmień</a> |
         <a href="@($"assets/details?id={asset.Id}")">Szczegóły</a> |
         <a href="@($"assets/delete?id={asset.Id}")">Usuń</a> |
-
+    </AuthorizeView> 
+    <AuthorizeView Roles="Admin, Employee">
         <a href="@($"assets/select?id={asset.Id}")">Wybierz jako bieżące</a>
+    </AuthorizeView>
     </TemplateColumn>
 </QuickGrid>
 

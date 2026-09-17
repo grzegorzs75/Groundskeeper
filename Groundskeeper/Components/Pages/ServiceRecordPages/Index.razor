@@ -7,13 +7,20 @@
 @inject IDbContextFactory<Groundskeeper.Data.GroundskeeperDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+
 <PageTitle>Kartoteka zabiegów</PageTitle>
 
 <h1>Karoteka zabiegów</h1>
 
+<AuthorizeView Roles="Admin, Employee">
 <p>
     <a href="servicerecords/create">Dodaj zabieg</a>
 </p>
+</AuthorizeView>
 
 <QuickGrid Class="table" Items="ServiceRecords.AsQueryable()">
     
@@ -22,13 +29,22 @@
     </TemplateColumn>
     <PropertyColumn Property="servicerecord => servicerecord.ServiceDate" Format="d" Title="Data"/>
     <PropertyColumn Property="servicerecord => servicerecord.Title" Title="Nazwa"/>
+    
+    <AuthorizeView Roles="Admin, Employee">
     <PropertyColumn Property="servicerecord => servicerecord.Description" Title="Opis wew."/>
+    </AuthorizeView>
+
     <PropertyColumn Property="servicerecord => servicerecord.Notes" Title="Opis zew."/>
 
     <TemplateColumn Context="servicerecord">
+         <AuthorizeView Roles="Admin, Employee">
         <a href="@($"servicerecords/edit?id={servicerecord.Id}")">Zmień</a> |
-        <a href="@($"servicerecords/details?id={servicerecord.Id}")">Szczegóły</a> |
-        <a href="@($"servicerecords/delete?id={servicerecord.Id}")">Usuń</a>
+        </AuthorizeView>
+
+        <a href="@($"servicerecords/details?id={servicerecord.Id}")">Szczegóły</a>
+        <AuthorizeView Roles="Admin, Employee">
+            | <a href="@($"servicerecords/delete?id={servicerecord.Id}")">Usuń</a>
+        </AuthorizeView>
     </TemplateColumn>
 </QuickGrid>
 

@@ -17,9 +17,11 @@
 
 <h1>Użytkownicy</h1>
 
+<AuthorizeView Roles="Admin">
 <p>
     <a href="appusers/create">Nowy użytkownik</a>
 </p>
+</AuthorizeView>
 
 <QuickGrid Class="table" Items="AppUsers.AsQueryable()">
     <PropertyColumn Property="appuser => appuser.Name" title="Nazwa" />

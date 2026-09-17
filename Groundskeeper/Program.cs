@@ -131,4 +131,12 @@ app.MapPost("/account/login", async (
     return Results.Redirect("/");
 });
 
+app.MapPost("/account/logout", async (HttpContext httpContext) =>
+{
+    await httpContext.SignOutAsync(
+        CookieAuthenticationDefaults.AuthenticationScheme);
+
+    return Results.Redirect("/login");
+});
+
 app.Run();

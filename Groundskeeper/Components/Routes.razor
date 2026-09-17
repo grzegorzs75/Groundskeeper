@@ -12,14 +12,14 @@
 
                 @if (authState.User.Identity?.IsAuthenticated == true)
                 {
-                    <LayoutView Layout="typeof(Layout.MainLayout)">
-                        <h3>Access denied</h3>
-                        <p>You do not have permission to view this page.</p>
-                    </LayoutView>
+                    
+                        <h3>Brak dostępu</h3>
+                        <p>Nie masz uprawnień do przeglądania tej strony.</p>
+                    
                 }
                 else
                 {
-                        <a href="/login">Login</a>
+                        <a href="/login">Zaloguj się</a>
                 }
 
             </NotAuthorized>
